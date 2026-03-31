@@ -11,9 +11,10 @@ public:
     Expectation(const T& val) : value(val), result(true), negate(false) {}
 
     // Comparison operators
+    // Only <, ==, and = are guaranteed to be overloaded
     Expectation& ge(const T& other) {
         if (result) {
-            bool condition = (value >= other);
+            bool condition = !(value < other); // a >= b is !(a < b)
             result = result && (negate ? !condition : condition);
         }
         return *this;
@@ -21,7 +22,7 @@ public:
 
     Expectation& gt(const T& other) {
         if (result) {
-            bool condition = (value > other);
+            bool condition = (other < value); // a > b is b < a
             result = result && (negate ? !condition : condition);
         }
         return *this;
@@ -29,7 +30,7 @@ public:
 
     Expectation& le(const T& other) {
         if (result) {
-            bool condition = (value <= other);
+            bool condition = (value < other) || (value == other); // a <= b is (a < b) || (a == b)
             result = result && (negate ? !condition : condition);
         }
         return *this;
